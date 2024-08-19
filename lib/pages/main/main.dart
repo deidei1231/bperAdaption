@@ -196,27 +196,6 @@ class _MainPageState extends State<MainPage> {
                             },
                             icon: const Icon(MyFonts.group,
                                 size: 30, color: Color(0xff357af2))),
-                        // SizedBox(
-                        //   width: 30,
-                        //   height: 30,
-                        //   child:  ElevatedButton(
-                        //     //     focusColor: const Color(0xffb4dcff),
-                        //     style: ElevatedButton.styleFrom(
-                        //       shape: RoundedRectangleBorder(
-                        //         borderRadius: BorderRadius.circular(6),
-                        //         //borderRadius: BorderRadius.zero, //Rectangular border
-                        //       ),
-                        //     ),
-                        //     onPressed: () {},
-                        //     child:  const Icon(
-                        //       // 假设 MyFonts.group 是一个有效的 IconData
-                        //       // 如果 MyFonts.group 不是一个有效的 IconData，你需要替换为实际的 IconData，如 Icons.group
-                        //       Icons.group, // 这里使用 Flutter 内置的 Icons.group 作为示例
-                        //       size: 16,
-                        //       color: Color(0xff357af2),
-                        //     ),
-                        //   ),
-                        // )
                       ]),
                 ),
                 // ),
