@@ -1,0 +1,37 @@
+{
+  "id": "4616555",
+  "name": "bper_flutter",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "41029338",
+      "name": "抽屉",
+      "font_class": "bper-chouti",
+      "unicode": "e605",
+      "unicode_decimal": 58885
+    },
+    {
+      "icon_id": "41029339",
+      "name": "群组",
+      "font_class": "bper-qunzu",
+      "unicode": "e606",
+      "unicode_decimal": 58886
+    },
+    {
+      "icon_id": "41029340",
+      "name": "切换",
+      "font_class": "bper-qiehuan",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
+      "icon_id": "41029341",
+      "name": "喇叭",
+      "font_class": "bper-laba",
+      "unicode": "e608",
+      "unicode_decimal": 58888
+    }
+  ]
+}
