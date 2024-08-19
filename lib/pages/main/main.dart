@@ -194,6 +194,7 @@ class _MainPageState extends State<MainPage> {
                               debugPrint("group");
                               Get.toNamed("/group");
                             },
+
                             icon: const Icon(MyFonts.group,
                                 size: 30, color: Color(0xff357af2))),
                       ]),
