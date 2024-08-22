@@ -1,6 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+
+import '../../apis/loginApi.dart';
+import '../../global.dart';
+import '../../widget/livekit_talk.dart';
+import '../../widget/ptt_manager.dart';
 
 class MorePage extends StatefulWidget {
   const MorePage({super.key});
@@ -11,6 +18,8 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   FocusScopeNode scopeNode = FocusScopeNode();
+  static final _ptt = Global.getIt<PttManager>();
+
 
   TextField buildTextField() {
     return TextField(
@@ -20,6 +29,34 @@ class _MorePageState extends State<MorePage> {
 
   void onEdit() {
     scopeNode.nextFocus();
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _loginIn();
+    _connectPtt();
+  }
+
+  Future<void> _loginIn() async {
+    var logger = Logger();
+    try {
+      var res = await LoginApi.loginBper();
+      logger.d(res);
+    } on DioException catch (e) {
+      logger.d(e.response);
+    }
+  }
+
+  Future<void> _connectPtt() async {
+    var logger = Logger();
+    try {
+      var res = await _ptt.connect("wss://b.bpersolutions.com",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQ2NTA2MzUsImlzcyI6ImJwZXIiLCJuYmYiOjE3MjQyOTA2MzUsInN1YiI6IkNfQU5EUk9JRF83IiwidmlkZW8iOnsiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuUHVibGlzaERhdGEiOnRydWUsImNhblB1Ymxpc2hTb3VyY2VzIjpbImNhbWVyYSIsIm1pY3JvcGhvbmUiXSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJpbmdyZXNzQWRtaW4iOnRydWUsInJvb20iOiJDSEFOTkVMXzEiLCJyb29tQWRtaW4iOnRydWUsInJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlfX0.6VPYgno0P77ttKOk6-LJhBIH2tbyhzH4KkYsMzQgPxM"      );
+    } on DioException catch (e) {
+      logger.d(e.response);
+    }
   }
 
   @override
@@ -50,8 +87,8 @@ class _MorePageState extends State<MorePage> {
         appBar: AppBar(
           toolbarHeight: 38,
           titleTextStyle:
-              const TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
-          title: const Text("more"),
+          const TextStyle(fontSize: 19, fontWeight: FontWeight.w500),
+          title: const Text("More"),
           backgroundColor: const Color(0xff357af2),
           foregroundColor: Colors.white,
         ),
@@ -59,7 +96,7 @@ class _MorePageState extends State<MorePage> {
           SizedBox(
             height: 62,
             child: ListTile(
-              autofocus: true,
+                autofocus: true,
                 title: const Text('User ID / Nickname'),
                 onTap: () {
                   Get.toNamed("/more/changeInfo");
@@ -72,7 +109,7 @@ class _MorePageState extends State<MorePage> {
                 title: const Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                     Text("Version"),
+                    Text("Version"),
                     Text("202409808128004010-93-19029-6",
                         style: TextStyle(
                             fontSize: 12, overflow: TextOverflow.ellipsis))
@@ -91,3 +128,4 @@ class _MorePageState extends State<MorePage> {
     );
   }
 }
+

@@ -2,7 +2,6 @@ import 'package:adaptation/widget/myButton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
-import 'package:logger/logger.dart';
 
 import '../../utils/myFonts.dart';
 
@@ -17,11 +16,6 @@ class _MainPageState extends State<MainPage> {
   FocusScopeNode focusScopeNode = FocusScopeNode();
   final FocusNode _focusNode1 = FocusNode(debugLabel: "button1");
   final FocusNode _focusNode2 = FocusNode(debugLabel: "button2");
-  FocusNode currentFocusNode = FocusNode(debugLabel: "currentFocusNode");
-  FocusNode noFocusNode = FocusNode(debugLabel: "noFocusNode");
-  late FocusAttachment _nodeAttachment;
-
-  // List<FocusNode> _focusNodes = [];
 
   @override
   void initState() {
@@ -47,9 +41,6 @@ class _MainPageState extends State<MainPage> {
   @override
   void dispose() {
     // 清理焦点节点
-    // for (var node in _focusNodes) {
-    //   node.dispose();
-    // }
     _focusNode1.dispose();
     _focusNode2.dispose();
     focusScopeNode.dispose();

@@ -1,10 +1,17 @@
 import 'package:adaptation/routers/routers.dart';
 import 'package:adaptation/utils/broadcast_listener.dart';
+import 'package:adaptation/values/constants.dart';
+import 'package:adaptation/widget/livekit_talk.dart';
+import 'package:adaptation/widget/ptt_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
 
-void main() {
+import 'global.dart';
+
+Future<void> main() async {
+  await Global.init();
+  // 状态栏透明
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   runApp(const MyApp());
@@ -18,11 +25,23 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+  static final _ptt = Global.getIt<PttManager>();
+
   @override
   void initState() {
     super.initState();
     BroadcastListener.listen().listen((event) {
-      debugPrint("Received PTT event: $event");
+      switch (event) {
+        case "PTT_UP":
+          _ptt.closeMic();
+          break;
+        case "PTT_DOWN":
+          _ptt.openMic();
+          break;
+        default:
+          debugPrint("Received Broadcast Event: $event");
+          break;
+      }
       // 根据event的值更新UI或执行其他操作
     });
   }
@@ -31,7 +50,7 @@ class _MyAppState extends State<MyApp> {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Flutter Demo',
+      title: 'Bper app',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
         useMaterial3: true,
