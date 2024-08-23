@@ -2,6 +2,7 @@ import 'package:adaptation/models/http_base.dart';
 import 'package:adaptation/models/login_user.dart';
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../global.dart';
 import '../utils/bper_http.dart';
@@ -26,8 +27,8 @@ class LoginApi {
         data: {
           // "account": data['username'],
           // "password": data['password'],
-          "account": "xxf",
-          "password": "6666",
+          "account": "dcy",
+          "password": "123456",
         },
       );
       // logger.i("${res.statusCode}");
@@ -37,6 +38,8 @@ class LoginApi {
       // logger.i(response.data);
       // logger.i(response.msg);
       final loginUserData = LoginUser.fromJson(res.data["data"]);
+      final SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('TOKEN', loginUserData.authToken ?? '');
       // logger.i(loginUserData.account);
       return loginUserData;
     } on DioException {

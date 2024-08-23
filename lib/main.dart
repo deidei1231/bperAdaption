@@ -1,11 +1,11 @@
+import 'package:adaptation/providers/channel_provider.dart';
 import 'package:adaptation/routers/routers.dart';
 import 'package:adaptation/utils/broadcast_listener.dart';
-import 'package:adaptation/values/constants.dart';
-import 'package:adaptation/widget/livekit_talk.dart';
 import 'package:adaptation/widget/ptt_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:provider/provider.dart';
 
 import 'global.dart';
 
@@ -14,7 +14,14 @@ Future<void> main() async {
   // 状态栏透明
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  runApp(const MyApp());
+  runApp(
+      MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ChannelProvider()),
+        ],
+        child: const MyApp(),
+      ),
+  );
 }
 
 class MyApp extends StatefulWidget {

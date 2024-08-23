@@ -1,9 +1,17 @@
-import 'package:adaptation/widget/myButton.dart';
+import 'package:adaptation/apis/channelApi.dart';
+import 'package:adaptation/models/channel_model.dart';
+import 'package:adaptation/providers/channel_provider.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+import 'package:logger/logger.dart';
+import 'package:provider/provider.dart';
 
+import '../../apis/loginApi.dart';
+import '../../global.dart';
 import '../../utils/myFonts.dart';
+import '../../widget/ptt_manager.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({super.key});
@@ -16,12 +24,39 @@ class _MainPageState extends State<MainPage> {
   FocusScopeNode focusScopeNode = FocusScopeNode();
   final FocusNode _focusNode1 = FocusNode(debugLabel: "button1");
   final FocusNode _focusNode2 = FocusNode(debugLabel: "button2");
+  static final _ptt = Global.getIt<PttManager>();
+
+  Future<void> _connectPtt() async {
+    var logger = Logger();
+    try {
+      await _ptt.connect("wss://b.bpersolutions.com",
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQ3NjMyMDMsImlzcyI6ImJwZXIiLCJuYmYiOjE3MjQ0MDMyMDMsInN1YiI6IkNfQU5EUk9JRF83IiwidmlkZW8iOnsiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuUHVibGlzaERhdGEiOnRydWUsImNhblB1Ymxpc2hTb3VyY2VzIjpbImNhbWVyYSIsIm1pY3JvcGhvbmUiXSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJpbmdyZXNzQWRtaW4iOnRydWUsInJvb20iOiJDSEFOTkVMXzEiLCJyb29tQWRtaW4iOnRydWUsInJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlfX0.1PpcWonridxGtSct6ph6Gs4cHNsYirUVAo0XwuDiCmo"
+      );
+    } on DioException catch (e) {
+      logger.d(e.response);
+    }
+  }
+
+
+  Future<void> _loginIn() async {
+    var logger = Logger();
+    try {
+      var loginUser = await LoginApi.loginBper();
+      var channelList = await ChannelApi.getChannel();
+      await _connectPtt();
+      logger.d(loginUser);
+      logger.d(channelList);
+    } on DioException catch (e) {
+      logger.e(e.response);
+    }
+  }
+
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-
+    _loginIn();
     _focusNode1.addListener(() {
       if (_focusNode1.hasFocus) {
         debugPrint('_focusNode1得到焦点');
@@ -49,6 +84,8 @@ class _MainPageState extends State<MainPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Provider.of<ChannelProvider>(context).setChannelList(_channelList);
+
     return Scaffold(
       body: Container(
           width: double.infinity,
@@ -88,16 +125,22 @@ class _MainPageState extends State<MainPage> {
                       // 水平居中（对于Column来说，这主要是控制子元素在水平方向上的对齐方式，但在这里由于只有一个方向，所以主要是为了确保Row居中）
                       // crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Row(
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           // crossAxisAlignment: CrossAxisAlignment.start,
                           // 如果你想让Row内的Text也水平居中，可以设置为center
                           children: [
-                            Text("Marking:",
+                            // Consumer<ChannelProvider>(builder: (context, provider, child){
+                            //   return Text(provider.currentChannel.info.name,
+                            //       style: const TextStyle(
+                            //           fontSize: 18,
+                            //           fontWeight: FontWeight.normal));
+                            // }),
+                            const Text("Marking:",
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal)),
-                            Text("3/16",
+                            const Text("3/16",
                                 style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.normal)),
@@ -185,7 +228,6 @@ class _MainPageState extends State<MainPage> {
                               debugPrint("group");
                               Get.toNamed("/group");
                             },
-
                             icon: const Icon(MyFonts.group,
                                 size: 30, color: Color(0xff357af2))),
                       ]),

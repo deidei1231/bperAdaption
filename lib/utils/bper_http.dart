@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class BperHttp {
   late final Dio _dio;
@@ -8,7 +9,7 @@ class BperHttp {
   BperHttp() {
     // 初始化基本选项
     BaseOptions options = BaseOptions(
-      baseUrl: 'http://s2.bpersolutions.com:8883/api/',
+      baseUrl: 'https://s2.bpersolutions.com/api/',
       connectTimeout: const Duration(seconds: 10),
       receiveTimeout: const Duration(seconds: 5),
       headers: {
@@ -30,11 +31,11 @@ class BperHttp {
   }
 
   Future<Response> get(
-    String url,
+    String url, {
     Map<String, dynamic>? params,
     Options? options,
     CancelToken? cancelToken,
-  ) async {
+  }) async {
     Options requestOptions = options ?? Options();
     Response response = await _dio.get(
       url,
@@ -62,11 +63,11 @@ class BperHttp {
   }
 
   Future<Response> put(
-    String url,
+    String url, {
     dynamic data,
     Options? options,
     CancelToken? cancelToken,
-  ) async {
+  }) async {
     Options requestOptions = options ?? Options();
     Response response = await _dio.put(
       url,
@@ -78,11 +79,11 @@ class BperHttp {
   }
 
   Future<Response> delete(
-    String url,
+    String url, {
     dynamic data,
     Options? options,
     CancelToken? cancelToken,
-  ) async {
+  }) async {
     Options requestOptions = options ?? Options();
     Response response = await _dio.delete(
       url,
@@ -97,13 +98,14 @@ class BperHttp {
 // 拦截器
 class RequestInterceptors extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
+  Future<void> onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
     // TODO: implement onRequest
-    // final SharedPreferences prefs = await SharedPreferences.getInstance();
-    // String? token =  await prefs.getString('TOKEN');
-    // if(token != ''){
-    //   options.headers['Authorization'] = 'Bearer $token';
-    // }
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString('TOKEN');
+    if (token != '') {
+      options.headers['Authorization'] = 'Bearer $token';
+    }
     super.onRequest(options, handler);
   }
 
@@ -138,18 +140,18 @@ class RequestInterceptors extends Interceptor {
       case DioExceptionType.badResponse:
         {
           print(err.message);
-            // 401表示token过期
-            // 重新登录
-            // await Global.getIt<BperHttp>().login();
-            // 重新请求
-            // final Response response = await Global.getIt<BperHttp>().get(
-            //   err.requestOptions.path,
-            //   err.requestOptions.queryParameters,
-            //   err.requestOptions.options,
-            //   err.requestOptions.cancelToken,
-            // );
-            // handler.resolve(response);
-          }
+          // 401表示token过期
+          // 重新登录
+          // await Global.getIt<BperHttp>().login();
+          // 重新请求
+          // final Response response = await Global.getIt<BperHttp>().get(
+          //   err.requestOptions.path,
+          //   err.requestOptions.queryParameters,
+          //   err.requestOptions.options,
+          //   err.requestOptions.cancelToken,
+          // );
+          // handler.resolve(response);
+        }
         break;
       case DioExceptionType.unknown:
         break;
