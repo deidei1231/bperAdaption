@@ -1,12 +1,10 @@
 import 'package:adaptation/apis/channelApi.dart';
-import 'package:adaptation/models/channel_model.dart';
-import 'package:adaptation/providers/channel_provider.dart';
+import 'package:adaptation/controllers/channel.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import '../../apis/loginApi.dart';
 import '../../global.dart';
@@ -25,38 +23,23 @@ class _MainPageState extends State<MainPage> {
   final FocusNode _focusNode1 = FocusNode(debugLabel: "button1");
   final FocusNode _focusNode2 = FocusNode(debugLabel: "button2");
   static final _ptt = Global.getIt<PttManager>();
+  ChannelController channelController = Get.find();
 
   Future<void> _connectPtt() async {
     var logger = Logger();
     try {
       await _ptt.connect("wss://b.bpersolutions.com",
-          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQ3NjMyMDMsImlzcyI6ImJwZXIiLCJuYmYiOjE3MjQ0MDMyMDMsInN1YiI6IkNfQU5EUk9JRF83IiwidmlkZW8iOnsiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuUHVibGlzaERhdGEiOnRydWUsImNhblB1Ymxpc2hTb3VyY2VzIjpbImNhbWVyYSIsIm1pY3JvcGhvbmUiXSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJpbmdyZXNzQWRtaW4iOnRydWUsInJvb20iOiJDSEFOTkVMXzEiLCJyb29tQWRtaW4iOnRydWUsInJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlfX0.1PpcWonridxGtSct6ph6Gs4cHNsYirUVAo0XwuDiCmo"
-      );
+          "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjQ3NjMyMDMsImlzcyI6ImJwZXIiLCJuYmYiOjE3MjQ0MDMyMDMsInN1YiI6IkNfQU5EUk9JRF83IiwidmlkZW8iOnsiY2FuUHVibGlzaCI6dHJ1ZSwiY2FuUHVibGlzaERhdGEiOnRydWUsImNhblB1Ymxpc2hTb3VyY2VzIjpbImNhbWVyYSIsIm1pY3JvcGhvbmUiXSwiY2FuU3Vic2NyaWJlIjp0cnVlLCJpbmdyZXNzQWRtaW4iOnRydWUsInJvb20iOiJDSEFOTkVMXzEiLCJyb29tQWRtaW4iOnRydWUsInJvb21DcmVhdGUiOnRydWUsInJvb21Kb2luIjp0cnVlfX0.1PpcWonridxGtSct6ph6Gs4cHNsYirUVAo0XwuDiCmo");
     } on DioException catch (e) {
       logger.d(e.response);
     }
   }
 
-
-  Future<void> _loginIn() async {
-    var logger = Logger();
-    try {
-      var loginUser = await LoginApi.loginBper();
-      var channelList = await ChannelApi.getChannel();
-      await _connectPtt();
-      logger.d(loginUser);
-      logger.d(channelList);
-    } on DioException catch (e) {
-      logger.e(e.response);
-    }
-  }
-
-
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loginIn();
+    channelController.initChannelList();
     _focusNode1.addListener(() {
       if (_focusNode1.hasFocus) {
         debugPrint('_focusNode1得到焦点');
@@ -136,6 +119,10 @@ class _MainPageState extends State<MainPage> {
                             //           fontSize: 18,
                             //           fontWeight: FontWeight.normal));
                             // }),
+                            Obx(() =>
+                                Text("${channelController.channelList.length}")),
+                            Obx(() =>
+                                Text("${channelController.currentIndex}")),
                             const Text("Marking:",
                                 style: TextStyle(
                                     fontSize: 18,

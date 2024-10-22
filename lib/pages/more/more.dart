@@ -5,6 +5,7 @@ import 'package:get/get.dart';
 import 'package:logger/logger.dart';
 
 import '../../apis/loginApi.dart';
+import '../../controllers/channel.dart';
 
 
 class MorePage extends StatefulWidget {
@@ -16,7 +17,7 @@ class MorePage extends StatefulWidget {
 
 class _MorePageState extends State<MorePage> {
   FocusScopeNode scopeNode = FocusScopeNode();
-
+  ChannelController channelController = Get.find();
 
   TextField buildTextField() {
     return TextField(
@@ -45,7 +46,7 @@ class _MorePageState extends State<MorePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _loginIn();
+    channelController.initChannelList();
   }
 
 

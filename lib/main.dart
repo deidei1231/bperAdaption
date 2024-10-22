@@ -4,9 +4,12 @@ import 'package:adaptation/utils/broadcast_listener.dart';
 import 'package:adaptation/widget/ptt_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_navigation/src/root/get_material_app.dart';
+import 'package:get/get.dart';
+import 'package:logger/logger.dart';
 import 'package:provider/provider.dart';
 
+import 'binding/binding.dart';
+import 'controllers/channel.dart';
 import 'global.dart';
 
 Future<void> main() async {
@@ -15,12 +18,12 @@ Future<void> main() async {
   SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(statusBarColor: Colors.transparent));
   runApp(
-      MultiProvider(
-        providers: [
-          ChangeNotifierProvider(create: (_) => ChannelProvider()),
-        ],
-        child: const MyApp(),
-      ),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => ChannelProvider()),
+      ],
+      child: const MyApp(),
+    ),
   );
 }
 
@@ -38,12 +41,18 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
     BroadcastListener.listen().listen((event) {
-      switch (event) {
-        case "PTT_UP":
+      Map<String, String> dataMap = _splitTypeAndData(event);
+      var logger = Logger();
+      logger.i(dataMap["type"]);
+      switch (dataMap["type"]) {
+        case "PTT-UP":
           _ptt.closeMic();
           break;
-        case "PTT_DOWN":
+        case "PTT-DOWN":
           _ptt.openMic();
+          break;
+        case "CHANNEL-CHANGE":
+          debugPrint("${int.parse(dataMap["data"]!)}");
           break;
         default:
           debugPrint("Received Broadcast Event: $event");
@@ -53,10 +62,27 @@ class _MyAppState extends State<MyApp> {
     });
   }
 
+  Map<String, String> _splitTypeAndData(String input) {
+    // 使用lastIndexOf来查找最后一个'_'的位置，如果没有找到，则返回-1
+    int underscoreIndex = input.lastIndexOf('_');
+
+    // 如果'_'不存在，则整个字符串是类型，数据为空
+    if (underscoreIndex == -1) {
+      return {'type': input, 'data': ''};
+    }
+
+    // 否则，分割字符串并返回类型和数据
+    String type = input.substring(0, underscoreIndex);
+    String data = input.substring(underscoreIndex + 1);
+
+    return {'type': type, 'data': data};
+  }
+
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      initialBinding: AllControllerBinding(),
       title: 'Bper app',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),

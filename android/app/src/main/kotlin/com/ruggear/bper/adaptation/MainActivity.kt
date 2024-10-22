@@ -31,19 +31,15 @@ class MainActivity: FlutterActivity(){
 
                         when (intent.action.toString()) {
                             "android.intent.action.PTT.up" -> {
-                                events?.success("PTT_UP")
+                                events?.success("PTT-UP")
                             }
 
                             "android.intent.action.PTT.down" -> {
-                                events?.success("PTT_DOWN")
+                                events?.success("PTT-DOWN")
                             }
 
                             "com.ruggear.intent.action.PTT.CHANNEL" -> {
-//                                events?.success("CHANNEL_data${intent.data}")
-//                                events?.success("CHANNEL_extras${intent.extras}")
-//                                events?.success("CHANNEL_clipData${intent.clipData}")
-//                                events?.success("CHANNEL_dataString${intent.dataString}")
-                                events?.success("CHANNEL_getInt${intent.getExtras()?.getInt("id")}")
+                                events?.success("CHANNEL-CHANGE_${intent.getExtras()?.getInt("id")}")
                             }
 
                         }

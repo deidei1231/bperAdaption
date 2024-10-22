@@ -1,11 +1,6 @@
-import 'package:adaptation/models/http_base.dart';
-import 'package:adaptation/models/login_user.dart';
 import 'package:dio/dio.dart';
-import 'package:logger/logger.dart';
-import 'package:provider/provider.dart';
 
 import '../global.dart';
-import '../models/channel_model.dart';
 import '../utils/bper_http.dart';
 
 class ApiUrls {
